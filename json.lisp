@@ -142,22 +142,6 @@ used with the Common Lisp reader as a macro character function."
           do (read-char stream))
     object))
 
-(defmethod print-object ((object json-map) stream)
-  (write-char #\{ stream)
-  (let ((first-p t))
-    (with-slots (table) object
-      (maphash (lambda (key value)
-                 (if first-p
-                     (setf first-p (not first-p))
-                   (write-string " , " stream))
-                 (write key :stream stream)
-                 (write-char #\space stream)
-                 (write-char #\: stream)
-                 (write-char #\space stream)
-                 (write value :stream stream))
-             table)))
-  (write-char #\} stream))
-
 (defun json-object-reader (stream first-char)
   "This function implements a reader for JSON objects. It should be
 used with the Common Lisp reader as a macro character function."
@@ -169,6 +153,30 @@ used with the Common Lisp reader as a macro character function."
           (:hash-table (read-object-as-hash-table stream))
           (:clos       (read-object-as-clos-instance stream)))
       (read-char stream))))
+
+;;; ================================================================
+;;; printing json object
+
+(defun print-json-object-from-hash-table (table stream)
+  (write-char #\{ stream)
+  (let ((first-p t))
+    (maphash (lambda (key value)
+               (if first-p
+                   (setf first-p (not first-p))
+                 (write-string " , " stream))
+               (write key :stream stream)
+               (write-char #\space stream)
+               (write-char #\: stream)
+               (write-char #\space stream)
+               (write value :stream stream))
+             table))
+  (write-char #\} stream))
+
+(defmethod print-object ((object json-map) stream)
+  (with-slots (table) object
+    (print-json-object-from-hash-table table stream))
+  object)
+
 
 ;;; ================================================================
 ;;; readtable and reader
