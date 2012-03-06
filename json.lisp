@@ -6,7 +6,7 @@
 ;;; http://www.json.org/
 ;;; http://en.wikipedia.org/wiki/JSON
 
-;;; Copyright 2010, Rainer Joswig, joswig@lisp.de
+;;; Copyright 2010/2012, Rainer Joswig, joswig@lisp.de
 
 ;;; This simple JSON reader uses the standard Common Lisp reader facility.
 
@@ -14,11 +14,22 @@
 ;;  (json-read stream eof-errop-p eof-value recursivep)
 ;;  (json-reader t)   installs the reader in the current readtable
 
+
+;;; ================================================================
+;;; Package JSON
+
 (defpackage "JSON"
   (:use "COMMON-LISP")
-  (:export "JSON-READ" "JSON-READER"))
+  (:export
+   "JSON-READ"     ; Function, read a JSON expression from a stream
+   "JSON-READER"   ; Function, use the JSON readtable
+   ))
 
 (in-package "JSON")
+
+
+;;; ================================================================
+;;; string
 
 (defun json-string-reader (stream first-char)
   "This function implements a reader for JSON strings. It should be
@@ -58,6 +69,10 @@ used with the Common Lisp reader as a macro character function."
              ,@body)
          (set-macro-character #\" ,fn-sym nil *readtable*)))))
 
+
+;;; ================================================================
+;;; array
+
 (defun convert-json-array (list)
   "Takes a list and returns a vector."
   (coerce list 'vector))
@@ -73,6 +88,9 @@ used with the Common Lisp reader as a macro character function."
                                      when (char= (peek-char t stream) #\,)
                                      do (read-char stream))
                           (read-char stream)))))
+
+;;; ================================================================
+;;; object
 
 (defun convert-json-object (list)
   "Converts a list of keys and values to an assoc list."
@@ -152,6 +170,9 @@ used with the Common Lisp reader as a macro character function."
           (:clos       (read-object-as-clos-instance stream)))
       (read-char stream))))
 
+;;; ================================================================
+;;; readtable and reader
+
 (defun make-json-readtable (&optional (readtable (copy-readtable nil)))
   "Creates a readtable with added functionality to
 read JSON datastructures (array, object, string).
@@ -188,7 +209,7 @@ Uses the characters {, }, [ and ]."
       readtable)))
 
 
-
+;;; ================================================================
 ;;; Examples
 
 #||
@@ -229,5 +250,5 @@ Uses the characters {, }, [ and ]."
     (pprint-newline :mandatory)))
 
 
-
+;;; ================================================================
 ;;; End of File
