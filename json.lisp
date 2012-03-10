@@ -9,6 +9,8 @@
 ;;; Copyright 2010/2012, Rainer Joswig, joswig@lisp.de
 
 ;;; This simple JSON reader uses the standard Common Lisp reader facility.
+;;; It assumes support for Unicode strings.
+;;; Tested in LispWorks 6.1.
 
 ;;; use:
 ;;  (json-read stream eof-errop-p eof-value recursivep)
@@ -246,17 +248,6 @@ Uses the characters {, }, [ and ]."
           do (terpri))))
 
 ||#
-
-
-#+ignore
-(defun simple-print-json-array (*standard-output* sequence)
-  (pprint-logical-block (*standard-output* sequence :prefix "[" :suffix "]")
-    (pprint-newline :mandatory) 
-    (loop for item in sequence do
-          (princ item)
-          (pprint-newline :miser))
-    (pprint-newline :mandatory)))
-
 
 ;;; ================================================================
 ;;; End of File
