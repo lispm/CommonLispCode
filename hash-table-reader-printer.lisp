@@ -1,4 +1,4 @@
-;;; -*- Mode: LISP; Package: ("HASH-TABLE-READER" :USE "COMMON-LISP"); BASE: 10.; Syntax: ANSI-COMMON-LISP; Default-Character-Style: (:FIX :ROMAN :NORMAL);-*-
+;;; -*- Mode: LISP; Package: ("HASH-TABLE-READER-PRINTER" :USE "COMMON-LISP"); BASE: 10.; Syntax: ANSI-COMMON-LISP; Default-Character-Style: (:FIX :ROMAN :NORMAL);-*-
 
 ;;;; a simple hash-table reader and printer in Common Lisp
 
@@ -7,22 +7,25 @@
 ;;; Tested in LispWorks 6.1.
 
 ;;; use:
+;;;   reads #{(a 1) (b 2)} as a hash-table
+;;;   arguments can determine the test function:
+;;;   this use EQUALP:  #3{("a" 1) ("B" 2)}
 
 ;;; ================================================================
-;;; Package HASH-TABLE-READER
+;;; Package HASH-TABLE-READER-PRINTER
 
-(defpackage "HASH-TABLE-READER"
+(cl:defpackage "HASH-TABLE-READER-PRINTER"
   (:use "COMMON-LISP")
   (:export
    "INSTALL-HASH-TABLE-SYNTAX"
    "PRINT-HASH-TABLE"
    ))
 
-(in-package "HASH-TABLE-READER")
+(in-package "HASH-TABLE-READER-PRINTER")
 
 
 ;;; ================================================================
-;;; object
+;;; reading
 
 (defparameter *comparison-functions*
   '(eq eql equal equalp))
@@ -46,6 +49,9 @@
   readtable)
 
 (install-hash-table-syntax)
+
+;;; ================================================================
+;;; printing
 
 (defun print-hash-table (hash-table &optional (stream *standard-output*))
   (write-char #\# stream)
