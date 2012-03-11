@@ -2,7 +2,9 @@
 ;;; useful for providing solutions to questions on comp.lang.lisp
 
 ;;; Code by me (other authors are noted) is licensed as Public Domain
-;;; and has Copyright Rainer Joswig, joswig@lisp.de, 2011 
+;;; and has Copyright Rainer Joswig, joswig@lisp.de, 2011 , 2012
+
+;;; Runs in LispWorks 6.1
 
 
 ;;; ================================================================
@@ -305,7 +307,31 @@ START can be a number, a character, a string or a symbol."
         collect b into b-list
         finally (return (values a-list b-list))))
 
+;;; ================================================================
+;;; Fowler's example in plain Lisp
 
+(defparameter *example-text*
+  "SVCLFOWLER         10101MS0120050313.........................
+SVCLHOHPE          10201DX0320050315........................
+SVCLTWO           X10301MRP220050329..............................
+USGE10301TWO          X50214..7050329")
+
+(defparameter *mappings*
+  '((svcl (name            4 19)
+          (id             19 24)
+          (call-type-code 24 28)
+          (date-of-call   28 36))
+    (usge (id              4  9)
+          (name            9 23)
+          (cycle          30 31)
+          (read-date      31 36))))
+
+(defun parse-log-lines-example (text mappings)
+  (mapcar (lambda (line &aux (name (subseq line 0 4)))
+            (cons name (mapcar (lambda (fields)
+                                 (list (car fields) (subseq line (cadr fields) (caddr fields))))
+                               (cdr (assoc name mappings :test #'string=)))))
+          (split-sequence '(#\newline) text)))
 
 ;;; ================================================================
 ;;; End of File
