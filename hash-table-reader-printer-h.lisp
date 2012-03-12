@@ -7,9 +7,9 @@
 ;;; Tested in LispWorks 6.1.
 
 ;;; use:
-;;;   reads #{(a 1) (b 2)} as a hash-table
+;;;   reads #H((a 1) (b 2)) as a hash-table
 ;;;   arguments can determine the test function:
-;;;   this use EQUALP:  #3{("a" 1) ("B" 2)}
+;;;   this use EQUALP:  #3H(("a" 1) ("B" 2))
 
 ;;; ================================================================
 ;;; Package HASH-TABLE-READER-PRINTER
@@ -30,8 +30,9 @@
 (defparameter *comparison-functions*
   '(eq eql equal equalp))
 
-(defun read-hash-table (stream character n &aux (delimiter #\}))
+(defun read-hash-table (stream character n &aux (delimiter #\)))
   (declare (ignore character))
+  (read-char stream)
   (let ((table (make-hash-table :test
                                 (if n
                                     (nth n *comparison-functions*)
@@ -44,8 +45,8 @@
     table))
 
 (defun install-hash-table-syntax (&optional (readtable *readtable*))
-  (set-dispatch-macro-character #\# #\{ 'read-hash-table)
-  (set-syntax-from-char #\} #\) readtable)
+  (set-dispatch-macro-character #\# #\H 'read-hash-table)
+  (set-dispatch-macro-character #\# #\h 'read-hash-table)
   readtable)
 
 (install-hash-table-syntax)
@@ -59,7 +60,7 @@
         ((member (hash-table-test hash-table) *comparison-functions*)
          (write (position (hash-table-test hash-table) *comparison-functions*)
                 :stream stream)))                          
-  (write-char #\{ stream)
+  (write-string "H(" stream)
   (let ((first-p t))
     (maphash (lambda (key value)
                (if first-p
@@ -67,7 +68,7 @@
                  (write-char #\space stream))
                (prin1 (list key value) stream))
              hash-table))
-  (write-char #\} stream)
+  (write-char #\) stream)
   hash-table)
 
 (defun pprint-hash-table (*standard-output* hash-table)
@@ -75,15 +76,15 @@
       (*standard-output*
        nil
        :prefix (cond ((eq (hash-table-test hash-table) 'eql)
-                      "#{")
+                      "#H(")
                      ((member (hash-table-test hash-table)
                               *comparison-functions*)
-                      (format nil "#~a{"
+                      (format nil "#~aH("
                               (position (hash-table-test hash-table)
                                         *comparison-functions*)))
-                     (t "#{"))
+                     (t "#H("))
          
-       :suffix "}")
+       :suffix ")")
     (let ((end (hash-table-count hash-table)) (i 0))
       (when (plusp end)
         (block printing
@@ -101,8 +102,8 @@
 ;;; ================================================================
 ;;; Examples
 
-; #{(a 5) (c 6) (b 3)}           ; uses EQL   as the test function
-; #2{("a" 5) ("c" 6) ("b" 3)}    ; uses EQUAL as the test function
+; #H((a 5) (c 6) (b 3))           ; uses EQL   as the test function
+; #2H(("a" 5) ("c" 6) ("b" 3))    ; uses EQUAL as the test function
 
 
 ;;; ================================================================
