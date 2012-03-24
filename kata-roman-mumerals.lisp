@@ -2,14 +2,14 @@
 ;;; Rainer Joswig, 2012
 
 (defparameter *roman-number-descriptors*
-  '((M 1000 900   C)
-    (D 500  400   C)
-    (C 100   90   X)
-    (L 50    40   X)
-    (X 10     9   I)
-    (V 5      4   I)
-    (I 1      1 nil))
-  "list of (roman-digit decimal-digit interval-start prefix-digit)")
+  '((M 1000 900)
+    (D 500  400)
+    (C 100   90)
+    (L 50    40)
+    (X 10     9)
+    (V 5      4)
+    (I 1      1))
+  "list of (roman-digit decimal-digit interval-start)")
 
 (defun roman-digit-to-decimal-value (roman-digit)
   "Returns the decimal value for a roman digit."
@@ -18,10 +18,7 @@
 (defun find-descriptor (n)
   "find the roman number descriptor for a number"
   (find-if (lambda (desc)
-             (destructuring-bind (r d s p)
-                 desc
-               (declare (ignore r d p))
-               (>= n s)))
+             (>= n (third desc)))
            *roman-number-descriptors*))
 
 (defun print-as-roman (n)
