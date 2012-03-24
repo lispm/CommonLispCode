@@ -42,19 +42,20 @@
 (defmacro llet (name vars &body body)
   "Recursive LET like in Clojure. Name is the name for the loop call.
 Vars is a list of variables for this loop, with initial bindings."
-  (let ((start-tag (gentemp)))
-    `(prog ,vars
-       ,start-tag
-       (macrolet
-           ((,name (&rest args)
-              (append '(progn)
-                      (loop for arg in args and var in ',vars
-                            collect `(setq ,(if (consp var)
-                                                (first var)
-                                              var)
-                                           ,arg))
-                      (list (list 'go ',start-tag)))))
-         (locally ,@body)))))
+  (labels ((generate-list-of-var-syms (vars)
+             (loop for var in vars
+                   collect (if (consp var)
+                               (first var)
+                             var))))
+    (let ((start-tag (gensym))
+          (list-of-var-syms (generate-list-of-var-syms vars)))
+      `(prog ,vars
+         ,start-tag
+         (macrolet ((,name (&rest args)
+                      `(progn
+                         (setf ,@(mapcan #'list ',list-of-var-syms args))
+                         (go ,',start-tag))))
+           (locally ,@body))))))
 
 #|
 
