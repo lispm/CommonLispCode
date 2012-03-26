@@ -9,18 +9,16 @@
 
 ;;;; Section 11.4 (The Zebra Problem)
 
-(clog:defrel nextto
-             ((nextto ?x ?y ?list) (iright ?x ?y ?list))
-             ((nextto ?x ?y ?list) (iright ?y ?x ?list)))
+(clog:defrel
+ nextto
+ ((nextto ?x ?y ?list) (iright ?x ?y ?list))
+ ((nextto ?x ?y ?list) (iright ?y ?x ?list)))
 
-(clog:defrel iright
-             ((iright ?left ?right (?left ?right . ?rest)))
-             ((iright ?left ?right (?x . ?rest))
-              (iright ?left ?right ?rest)))
-
-;(clog:defrel gleich
-;             ((gleich ?x ?x)))
-
+(clog:defrel
+ iright
+ ((iright ?left ?right (?left ?right . ?rest)))
+ ((iright ?left ?right (?x . ?rest))
+  (iright ?left ?right ?rest)))
 
 (clog:defrel
  zebra
@@ -33,7 +31,7 @@
   (member (house englishman ? ? ? red) ?h)       ; 2
   (member (house spaniard dog ? ? ?) ?h)         ; 3
   (member (house ? ? ? coffee green) ?h)         ; 4
-  (member (house ukrainian ? ? tea ?) ?h)         ; 5
+  (member (house ukrainian ? ? tea ?) ?h)        ; 5
   (iright (house ? ? ? ? ivory)                  ; 6
           (house ? ? ? ? green) ?h)
   (member (house ? snails winston ? ?) ?h)       ; 7
@@ -47,7 +45,7 @@
   (nextto (house norwegian ? ? ? ?)              ;15
           (house ? ? ? ? blue) ?h)
   (member (house ?w ? ? water ?) ?h)             ;Q1
-  (member (house ?z zebra ? ? ?) ?h)))            ;Q2
+  (member (house ?z zebra ? ? ?) ?h)))           ;Q2
 
 
 ; (logic '(zebra ?houses ?water-drinker ?zebra-owner) :return-type :alist)
