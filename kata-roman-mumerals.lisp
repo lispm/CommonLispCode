@@ -25,12 +25,12 @@
   "prints the integer as a roman number"
   (check-type n (integer 1 3000))
   (loop while (plusp n) do
-        (destructuring-bind (r d s p)
+        (destructuring-bind (r d s)
             (find-descriptor n)
-          (declare (ignore s))
-          (when (and (< n d) p)
-            (write p)
-            (incf n (roman-digit-to-decimal-value p)))
+          (let ((p (- d s)))
+            (when (and (< n d) (plusp p))
+              (write (first (find-descriptor p)))
+              (incf n p)))
           (write r)
           (decf n d))))
 
