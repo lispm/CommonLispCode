@@ -1,4 +1,4 @@
-;;; Lisp 1 vs. Common Lisp
+;;; Lisp 1 vs. Common Lisp vs. Scheme vs. Emacs Lisp
 
 ;;; Rainer Joswig, joswig@lisp.de, 2012
 
@@ -38,3 +38,26 @@ CL-USER > (COLLAPSE '(((A B) ((C))) ((D (E F)) (G) ((H)))))
 (A B C D E F G H)
 
 |#
+
+; Scheme
+
+(define collapse
+  (lambda (l)
+    (cond 
+     ((atom? l) (cons l '()))
+     ((null? (cdr l))
+      (cond ((atom? (car l)) l)
+            (else (collapse (car l)))))
+     (else (append (collapse (car l))
+                   (collapse (cdr l)))))))
+
+; Emacs Lisp
+
+(defun collapse (l)
+  (cond 
+   ((atom l) (cons l nil))
+   ((null (cdr l))
+    (cond ((atom (car l)) l)
+          (t (collapse (car l)))))
+   (t (append (collapse (car l))
+              (collapse (cdr l))))))
