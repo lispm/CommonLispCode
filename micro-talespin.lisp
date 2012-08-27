@@ -26,13 +26,14 @@
 
 
 ; Changes by Rainer Joswig, joswig@lisp.de, 2012:
-;   fixed: dprox-plan1, ptrans only if the actor knows the new loc
+;   fixed:  dprox-plan1, ptrans only if the actor knows the new loc
+;   hacked: Output sentence starts with an uppercase letter and then lowercase letters follow.
 ; Changes by Rainer Joswig, joswig@lisp.de, 2008:
-;   fixed: persuade and not peruade
-;   fixed: three args to persuade
-;   fixed: changed implementation of PCVar from Structure to Symbol (symbol with leading ?)
-;   fixed: correct spaces in output
-;   fixed: put symbols instead of functions, makes tracing easier
+;   fixed:  persuade and not peruade
+;   fixed:  three args to persuade
+;   fixed:  changed implementation of PCVar from Structure to Symbol (symbol with leading ?)
+;   fixed:  correct spaces in output
+;   fixed:  put symbols instead of functions, makes tracing easier
 
 
 ;  Standard definition of put.
@@ -138,7 +139,7 @@ the other person."
             (and (doit (propel ',actor 'hand ',agent))
                  (is-true ',action)))))
 
-(defvar *default-tense* 'past
+(defvar *default-tense* 'past  ; or present
   "Set the storytelling in the past tense.")
 
 ;  micro-talespin-demo variables for sample stories
@@ -1023,6 +1024,12 @@ then he's in a loop and has failed.  Otherwise, set up the goal and go."
     cd
     (cdpath (cdr rolelist) (filler-role (car rolelist) cd))))
 
+; each string should start with a capital letter and then be lower case.
+(defun beautify-string (string)
+  (when (plusp (length string))
+    (nstring-downcase string)
+    (setf (aref string 0) (char-upcase (aref string 0))))
+  string)
 
 ;  micro-mumble: micro English generator
 
@@ -1036,11 +1043,14 @@ then he's in a loop and has failed.  Otherwise, set up the goal and go."
                          cd)))
     (flet ((say-it ()
              (format t "~%")
-             (say1 cd-to-be-said 
-                   (or (cdpath '(time) cd-to-be-said)
-                       *default-tense*)
-                   nil
-                   t)
+             (write-string
+              (beautify-string
+               (with-output-to-string (*standard-output*)
+                 (say1 cd-to-be-said 
+                       (or (cdpath '(time) cd-to-be-said)
+                           *default-tense*)
+                       nil
+                       t))))
              (format t ".")))
       (say-it))
     cd))
