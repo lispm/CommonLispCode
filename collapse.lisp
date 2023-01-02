@@ -2,6 +2,22 @@
 
 ;;; Rainer Joswig, joswig@lisp.de, 2012
 
+;;; The original code is from
+;;;  THE LISP 1 PROGRAMMER'S MANUAL FROM 1960, PAGE 99FF
+
+; the Lisp 1 Programmer's manual is the first manual for the first Lisp implementation.
+; DEFINE then was the operator to define new function.s
+; With minor rewriting the code runs largely unchanged in Common Lisp.
+; That's what makes Common Lisp one of the main Lisp dialects:
+;
+;  it still contains at its core the original functionality of LISP from 1960.
+;
+; This makes it possible to understand code from decades back to the 1960s.
+;
+; One can see below that both Emacs Lisp and Scheme are two other languages
+; which can express the same program also with only minor changes.
+
+
 #|
 
 ; THE LISP 1 PROGRAMMER'S MANUAL FROM 1960, PAGE 99FF:
